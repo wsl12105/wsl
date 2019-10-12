@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+. conf/wsl.conf
+if [ "$3" == "shell" ]
+then
+    . model/shell
+fi
+if [ "$3" == "copy" ]
+then
+	. model/copy
+fi
+

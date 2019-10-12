@@ -1,0 +1,42 @@
+#!/bin/bash
+. conf/wsl.conf
+MODS=(Ping shell copy fectch)
+function checkParam(){
+  	#echo "${CMD[@]}"
+	echo "${HOSTS[@]}"|grep "\<$HOSTIP\>" > $NULL # grep "\<abc\>" 精致匹配字符串abc
+	if [[ "$?" == "0" ]] 
+	then
+		host=$HOSTIP
+	elif [[ "$HOSTIP" == "all" ]]
+    then
+        host=$HOSTS
+	else
+		echo -e $PINK "[WARNING]: Could not match supplied host pattern, ignoring: $HOSTIP \n"
+		echo -e " [WARNING]: No hosts matched, nothing to do \n" $RESETTEMINAL
+		exit 1
+	fi
+	
+	#if [[ "$HOSTIP" == "all" ]]
+	#then
+	#	host=$HOST
+	#fi
+
+	if [[ "$OPTION" != "-m" ]]
+	then
+		echo -e $RED "ERROR! Extraneous options or arguments" $RESETTEMINAL
+	fi
+
+	echo ${MODS[@]}|grep "\<$MOD\>" > $NULL # grep "\<abc\>" 精致匹配字符串abc
+	if [[ "$?" != "0" ]]
+	then
+		echo -e $RED "ERROR! No module $MOD " $RESETTEMINAL
+		exit 1
+	fi
+	
+	if [[ "$ARGV" != "-a" ]]
+	then
+		echo "wsl: error: $ARGV option requires an argument"
+		exit 1
+	fi	 
+}
+checkParam

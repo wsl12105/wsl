@@ -1,0 +1,17 @@
+#!/bin/bash
+function Ping (){
+    for host in $HOSTS
+    do
+       ping -c 3  $host > $NULL
+       if [ $? -eq 0 ]
+       then
+            echo -e $GREEN ""
+            echo -e "$host | SECCUSE => {"
+            echo -e "\"changed\": false,\n \"ping\": \"pong\" \n}" $RESETTEMINAL
+       else
+			echo -e $RED "$host | Failed => { "
+            echo -e "Unreachable !\n }" $RESETTEMINAL
+       fi
+    done
+}
+Ping

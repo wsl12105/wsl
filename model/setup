@@ -1,0 +1,12 @@
+#!/bin/bash
+. model/checkParam
+function setup(){
+    #get remote machine base infomation
+    CPUModel=$(cat /proc/cpuinfo |grep "model name"|awk -F ":" '{print $2}'|uniq)
+    CPUProc=$(cat /proc/cpuinfo |grep processor|wc -l)
+    Mem=$(free -m |grep "Mem"|awk '{print "Total",$1,$2"M"}')
+    echo $RED
+    echo -e "CPU     Model: $CPUModel"
+    echo -e "CPU Processor: $CPUProc" $RESETTEMINAL
+}
+setup
