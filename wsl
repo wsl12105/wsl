@@ -1,6 +1,11 @@
 #!/bin/bash
 #
 . conf/wsl.conf
+if [ "$[@]" -eq "0" ]
+then
+	.model/wslHelp
+fi
+
 if [ "$3" == "shell" ]
 then
     . model/shell

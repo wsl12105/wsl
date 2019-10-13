@@ -6,6 +6,7 @@
 #########################################################################
 #!/bin/bash
 mkdir /usr/local/wsl
-cp wsl /usr/local/wsl
-chmod 0755 -R /usr/local/wsl	
+cp -r * /usr/local/wsl
+chmod 0755 -R /usr/local/wsl/wsl
+ln -s /usr/local/wsl/wsl /usr/local/bin/	
 

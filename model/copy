@@ -14,10 +14,44 @@ function copy(){
 	src=$(echo $filePath|awk -F ' ' '{print $1}'|awk -F '=' '{print $2}') > $NULL
 	dest=$(echo $filePath|awk -F ' ' '{print $2}'|awk -F '=' '{print $2}') > $NULL
 	state=$(echo $filePath|awk -F ' ' '{print $3}'|awk -F '=' '{print $2}') > $NULL
+	backup=$(echo $filePath|awk -F ' ' '{print $4}'|awk -F '=' '{print $2}') > $NULL
 	srcFileName=$(basename $src)
-	for i in $host
+	srcCheckSum=$(md5sum $src|awk -F ' ' '{print $1}')
+	for hst in $host
 	do
-		scp -r $src root@$i:$dest 2>&1 > $NULL
+		destCheckSum=$(ssh $hst sha1sum $dest|awk -F ' ' '{print $1}')
+		destMode=$(ssh $hst ls -l $dest|grep "-"|awk -F ' ' '{print $1}')
+		owner=$(ssh $hst ls -l $dest|grep "-"|awk -F ' ' '{print $3}')
+		group=$(ssh $hst ls -l $dest|grep "-"|awk -F ' ' '{print $4}')
+		sizes=$(ssh $hst ls -l $dest|grep "-"|awk -F ' ' '{print $5}')
+		
+		if [[ "$srcCheckSum" == "$destCheckSum" ]]
+		then
+			echo -e $GREEN "$hst | SUCCESS => { \n \
+   			    \"changed\": false, \
+    			\"checksum\": \"$destCheckSum", \
+    			\"dest\": \"$dest", \
+    			\"gid\": 0, \
+    			\"group\": \"$group\", \
+    			\"mode\": \"$destMode\", \
+    			\"owner\": \"$owner\", \
+    			\"path\": \"$dest\", 
+    			\"size\": $sizes, \
+    			\"state\": \"file\", \
+    			\"uid\": 0"	$RESETTEMINAL
+		fi
+		echo "$filePath"|grep "backup=yes" > $NULL	
+		if [[ "$?" -eq "0" ]]
+		then
+			ssh $hst > $NULL 2>&1  << eeooff
+  			cd $dest
+       		mv $srcFileName $srcFileName\.bak$(date +"%Y-%m-%d@%H:%M:%S~")
+eeooff
+			scp -r $src root@$hst:$dest 2>&1 > $NULL
+		else
+			scp -r $src root@$hst:$dest 2>&1 > $NULL
+		fi
+		
 	done
 }
 copy
